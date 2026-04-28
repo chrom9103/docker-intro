@@ -223,7 +223,7 @@ Dockerfileの手順に則って、コンテナを作ってもらいます。
 - バックエンド（Express）
 - データベース（PostgreSQL）
 
-それぞれに Dockerfile を作って個別に起動するのは面倒ですよね。
+それぞれを個別に起動するのは面倒ですよね。
 
 **docker-compose** は、複数のコンテナを一度に管理するツールです。
 
@@ -249,12 +249,13 @@ services:
 
   # データベース
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     environment:
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: todo_db
+      POSTGRES_DB: task_db
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   db_data:
