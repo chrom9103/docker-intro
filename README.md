@@ -62,40 +62,15 @@ Dockerを自分のPCに導入してください！！
 
 #### 0.2.1. Docker Desktop のインストール
 
-<details><summary>Windows ユーザー向け</summary>
-
-1. [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop) からダウンロードします。
-2. ダウンロードした `.exe` ファイルを実行し、指示に従ってインストールします。
-3. インストール完了後、PowerShell を再起動し、以下のコマンドで確認します：
-   ```bash
-   docker --version
-   ```
-   バージョン情報が表示されれば成功です。
-
-</details>
-
-<details><summary>Mac ユーザー向け</summary>
-
-// WRITE ME!!
-
-</details>
+Docker Desktopをインストールするのが一番楽です。  
+公式サイトにアクセス([URL: https://www.docker.com/ja-jp/](https://www.docker.com/ja-jp/))し、自分の環境にあったインストーラーを落としてきてください。  
+  
+![](./images/DockerDesktopTopPage.png)
+  
+もちろん落としてきたらインストールまでするんだよ!!  
 
 > [!IMPORTANT]
 > インストール時に問題が起きた場合は、気軽に質問してください！
-
-#### 0.2.2. 講習用フォルダの作成
-
-演習用のファイルを収納するフォルダを作成しましょう。
-
-```bash
-cd ~
-mkdir -p develops/docker-intro
-cd develops/docker-intro
-```
-
-このフォルダが今回の作業ディレクトリになります。
-
----
 
 ## 1. なぜDockerが必要なのか
 
