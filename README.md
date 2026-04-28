@@ -287,37 +287,38 @@ docker compose up --build
 
 #### 2.0.1. 概要
 
-**TODO リスト Web アプリ**
+**タスク管理 Web アプリ**
 
 このアプリケーションは以下の構成です：
 
-- **フロントエンド**: React + Vite（ユーザーインターフェース）
+- **フロントエンド**: バニラ HTML + JavaScript（ユーザーインターフェース）
 - **バックエンド**: Express.js（API サーバー）
-- **データベース**: PostgreSQL（TODO データ保存）
+- **データベース**: PostgreSQL（タスクデータ保存）
 
-ユーザーはフロントエンドで TODO を入力→バックエンド API を通じて→PostgreSQL に保存、という流れです。
+ユーザーはフロントエンドでタスクを入力→バックエンド API を通じて→PostgreSQL に保存、という流れです。
 
 #### 2.0.2. ディレクトリ構成
 
 ```
 docker-intro/
 ├── README.md                    ← このファイル
-├── docker-compose.yml           ← 全サービスの定義
-├── frontend/
-│   ├── Dockerfile              ← React ビルド設定
-│   ├── package.json
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── App.css
-│   │   └── main.jsx
-│   └── index.html
-├── backend/
-│   ├── Dockerfile              ← Express ビルド設定
-│   ├── package.json
-│   ├── server.js               ← メインサーバーコード
-│   └── .env
-└── database/
-    └── init.sql                ← PostgreSQL 初期設定スクリプト
+├── WebApp/
+│   ├── docker-compose.yaml      ← 全サービスの定義
+│   ├── frontend/
+│   │   ├── Dockerfile          ← バニラHTML サーバー設定
+│   │   ├── package.json
+│   │   ├── index.html          ← メインページ
+│   │   ├── app.js              ← JavaScript ロジック
+│   │   └── style.css           ← スタイル定義
+│   ├── backend/
+│   │   ├── Dockerfile          ← Express ビルド設定
+│   │   ├── package.json
+│   │   ├── server.js           ← メインサーバーコード
+│   │   └── .env                ← 環境変数設定
+│   └── database/
+│       └── init.sql            ← PostgreSQL 初期設定スクリプト
+├── images/
+└── README.md
 ```
 
 ---
@@ -329,24 +330,16 @@ docker-intro/
 **フロントエンド (frontend/Dockerfile)**
 
 ```dockerfile
-# ビルドステージ
-FROM node:18 AS builder
+FROM node:18
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
-
-# 本番ステージ
-FROM node:18
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY package*.json ./
-RUN npm install --production
-
 EXPOSE 3000
-CMD ["npm", "run", "preview"]
+CMD ["npm", "start"]
 ```
+
+シンプルな HTTP サーバー（http-server）を使用してバニラ HTML ファイルを配信しています。
 
 **バックエンド (backend/Dockerfile)**
 
@@ -356,10 +349,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-
 EXPOSE 5000
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
 ```
+
+Express.js サーバーで API を提供します。
 
 #### 2.1.2. docker-compose.yml の説明
 
@@ -367,13 +361,11 @@ CMD ["node", "server.js"]
 version: '3.8'
 
 services:
-  # React フロントエンド
+  # バニラ HTML フロントエンド
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
-    environment:
-      - VITE_API_URL=http://localhost:5000
     depends_on:
       - backend
     networks:
@@ -384,22 +376,26 @@ services:
     build: ./backend
     ports:
       - "5000:5000"
-    environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/todo_db
     depends_on:
       - db
     networks:
       - app-network
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=task_db
 
   # PostgreSQL データベース
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: todo_db
+      POSTGRES_DB: task_db
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -423,8 +419,8 @@ networks:
 それでは、実際に Docker でアプリケーションを起動してみます。
 
 ```bash
-# docker-intro ディレクトリに移動
-cd ~/develops/docker-intro
+# docker-intro/WebApp ディレクトリに移動
+cd ~/develops/docker-intro/WebApp
 
 # 全ての環境をビルドして起動
 docker compose up --build
@@ -435,8 +431,8 @@ docker compose up --build
 ログにエラーがなく、以下のようなメッセージが表示されれば成功です：
 
 ```
-backend    | Server is listening on port 5000
-frontend   | VITE v5.0.0 ready in 500 ms
+backend    | Backend server is running on port 5000
+frontend   | listening on http://0.0.0.0:3000
 db         | database system is ready to accept connections
 ```
 
@@ -447,18 +443,18 @@ db         | database system is ready to accept connections
 
 ### 2.2. アプリを操作してみる
 
-#### 2.2.1. フロントエンドで TODO 作成
+#### 2.2.1. フロントエンドでタスク作成
 
 ブラウザで http://localhost:3000 にアクセスしてください。
 
-React アプリケーションが表示されます。
+タスク管理アプリケーションが表示されます。
 
-TODO リストアプリで以下の操作をしてみましょう：
-- テキストボックスに TODO を入力
+以下の操作をしてみましょう：
+- テキストボックスにタスク名を入力
+- 期限やメモ（オプション）を追加
 - 「追加」ボタンをクリック
-- TODO がリストに表示される
-- 「完了」をクリックすると、TODO に線が引かれる
-- 「削除」をクリックすると、TODO が削除される
+- タスクが一覧に表示される
+- 「削除」ボタンでタスクを削除できる
 
 > [!TIP]
 > フロントエンドで行った操作は、バックエンド API を通じてデータベースに保存されています。
@@ -471,13 +467,16 @@ TODO リストアプリで以下の操作をしてみましょう：
 別のターミナルウィンドウを開いて、以下のコマンドを実行してください：
 
 ```bash
-# TODO 一覧を取得
-curl http://localhost:5000/api/todos
+# タスク一覧を取得
+curl http://localhost:5000/api/tasks
 
-# 新規 TODO を作成
-curl -X POST http://localhost:5000/api/todos \
+# 新規タスクを作成
+curl -X POST http://localhost:5000/api/tasks \
   -H "Content-Type: application/json" \
-  -d '{"title": "新しい TODO"}'
+  -d '{"title": "新しいタスク", "note": "これはメモです"}'
+
+# タスクを削除
+curl -X DELETE http://localhost:5000/api/tasks/1
 ```
 
 結果が JSON 形式で返ってくれば、API が正常に動作しています。
