@@ -483,6 +483,42 @@ db-1        | 2026-04-29 16:37:13.265 UTC [1] LOG:  database system is ready to 
 > フロントエンドで行った操作は、バックエンド API を通じてデータベースに保存されています。
 > ページをリロードしても、データが残っていることが確認できます。
 
+#### 2.2.2. フロントエンドコンテナ内部の確認 (webapp-frontend)
+
+ホストからフロントエンドコンテナに入り、コンテナ内で何が動いているか確認する手順を示します。まずはホスト側でコンテナ名を確認してください（例: `webapp-frontend-1`）。
+
+ホスト側での確認例：
+
+```bash
+# コンテナ一覧（名前を確認）
+docker ps
+
+# コンテナのプロセス一覧（ホストから）
+docker top webapp-frontend-1
+
+# コンテナのログを追う
+docker logs --follow webapp-frontend-1
+```
+
+コンテナ内へ入る
+
+```bash
+docker exec -it webapp-frontend-1 bash
+```
+
+コンテナ内での代表的な確認コマンド：
+
+```bash
+# 作業ディレクトリの中身を確認
+ls -al
+
+# フロントエンドが localhost:3000 で応答するか確認
+curl -I http://localhost:3000
+
+# package.json を確認
+cat package.json
+```
+
 ---
 
 ## 3. まとめ
