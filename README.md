@@ -260,18 +260,15 @@ volumes:
   db_data:
 ```
 
-このファイルがあれば、以下の 1 コマンドで全ての環境が整って起動します：
-
-```bash
-docker compose up --build
-```
+このファイルがあれば、コマンドをすこ～し打つだけで全ての環境が整って起動します。  
 
 ### 1.1.4. 基本的なコマンド
 
-この講習では、実質 1 つのコマンドだけ覚えればOKです：
+この講習では、とりあえず**2つ**だけコマンドを覚えて下さい。
 
 ```bash
-docker compose up --build
+docker compose build
+docker compose up
 ```
 
 | コマンド | 説明 |
