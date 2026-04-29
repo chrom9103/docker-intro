@@ -451,9 +451,12 @@ docker compose up
 ログにエラーがなく、以下のようなメッセージが表示されれば成功です：
 
 ```
-backend    | Backend server is running on port 5000
-frontend   | listening on http://0.0.0.0:3000
-db         | database system is ready to accept connections
+backend-1   | Backend server is running on port 5000
+frontend-1  | Available on:
+frontend-1  |   http://127.0.0.1:3000
+frontend-1  |   http://172.22.0.4:3000
+frontend-1  | Hit CTRL-C to stop the server
+db-1        | 2026-04-29 16:37:13.265 UTC [1] LOG:  database system is ready to accept connections
 ```
 
 > [!NOTE]
