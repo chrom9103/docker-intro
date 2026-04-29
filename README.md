@@ -483,27 +483,6 @@ db-1        | 2026-04-29 16:37:13.265 UTC [1] LOG:  database system is ready to 
 > フロントエンドで行った操作は、バックエンド API を通じてデータベースに保存されています。
 > ページをリロードしても、データが残っていることが確認できます。
 
-#### 2.2.2. バックエンドの動作確認
-
-バックエンド API の動作確認も可能です。
-
-別のターミナルウィンドウを開いて、以下のコマンドを実行してください：
-
-```bash
-# タスク一覧を取得
-curl http://localhost:5000/api/tasks
-
-# 新規タスクを作成
-curl -X POST http://localhost:5000/api/tasks \
-  -H "Content-Type: application/json" \
-  -d '{"title": "新しいタスク", "note": "これはメモです"}'
-
-# タスクを削除
-curl -X DELETE http://localhost:5000/api/tasks/1
-```
-
-結果が JSON 形式で返ってくれば、API が正常に動作しています。
-
 ---
 
 ## 3. まとめ
