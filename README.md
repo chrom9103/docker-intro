@@ -372,7 +372,7 @@ CMD ["npm", "start"]
 
 Express.js サーバーで API を提供します。
 
-#### 2.1.2. docker-compose.yml の説明
+#### 2.1.2. docker-compose.ymal の説明
 
 ```yaml
 version: '3.8'
