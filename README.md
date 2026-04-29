@@ -273,10 +273,11 @@ docker compose up
 
 | コマンド | 説明 |
 |---------|------|
-| `docker compose up --build` | `docker-compose.yml` で定義された全てのコンテナをビルドして起動 |
+| `docker compose build` | `docker-compose.ymal` で定義された全てのコンテナイメージをビルド |
+| `docker compose up` | ビルド済みのコンテナを起動 |
 
 > [!NOTE]
-> `--build` フラグは「ファイルに変更があったら、イメージを最新の状態で再ビルドする」という意味です。
+> この2つのコマンドを実行することで、イメージのビルドとコンテナの起動が完了します。
 
 その他の基本的なコマンド（参考）：
 - `docker compose down` - コンテナを停止・削除
@@ -426,8 +427,11 @@ networks:
 # docker-intro/WebApp ディレクトリに移動
 cd ~/develops/docker-intro/WebApp
 
-# 全ての環境をビルドして起動
-docker compose up --build
+# 1. 全ての環境をビルド
+docker compose build
+
+# 2. コンテナを起動
+docker compose up
 ```
 
 初回は Docker イメージをダウンロード・ビルドするため、数分かかります。
