@@ -437,7 +437,7 @@ networks:
 
 ```bash
 # docker-intro/WebApp ディレクトリに移動
-cd ~/develops/docker-intro/WebApp
+cd ./WebApp/
 
 # 1. 全ての環境をビルド
 docker compose build
