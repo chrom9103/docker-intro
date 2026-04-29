@@ -82,45 +82,70 @@ Docker Desktopをインストールするのが一番楽です。
 
 講師が実際に Ubuntu マシンで環境構築を行い、その手間の多さを体感してもらいます。
 
-#### 1.0.1. Linux (Ubuntu) 環境構築実演
+#### 1.0.1. Ubuntu 環境での初回構築実演
 
-**講師の実演内容：**
+**講師の実演内容（Ubuntu での完全なセットアップ）：**
 
 ```bash
-# 1. システムの更新
+# 1. システムパッケージの更新
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 
-# 2. Node.js と npm のインストール
+# 2. Node.js 18 のインストール
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
-# 3. React プロジェクトの作成
-npm create vite@latest todo-app -- --template react
-cd todo-app
-npm install
-
-# 4. バックエンド (Express) の初期設定
-npm install express cors pg dotenv
-
-# 5. PostgreSQL のインストール
+# 3. PostgreSQL のインストール
 sudo apt-get install -y postgresql postgresql-contrib
 
-# 6. PostgreSQL サービスの起動と初期化
+# 4. PostgreSQL サービスの起動
 sudo service postgresql start
-sudo -u postgres createdb todo_db
 
-# 7. スキーマ作成
-# todo_db に接続して、テーブルを作成
-# ...複数ステップが必要
+# 5. PostgreSQL の postgres ユーザーでデータベースを作成
+sudo -u postgres psql -c "CREATE DATABASE task_db;"
 
-# 8. CORS設定、ポート設定、DB接続文字列設定 など...複数の設定ファイル編集
+# 6. テーブルを作成
+sudo -u postgres psql -d task_db -c "
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  time TIMESTAMP,
+  note TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_tasks_created_at ON tasks(created_at DESC);
+"
 
-# 9. フロントエンド、バックエンド、DB を別々に起動
-# ターミナルを複数個開いて、それぞれで起動...
+# ============================================
+# 【毎回】アプリケーションを起動
+# ============================================
+
+# 7. リポジトリのディレクトリに移動
+cd ~/docker-intro/WebApp
+
+# 8. バックエンドのセットアップと起動（ターミナル 1）
+cd backend
+npm install
+export POSTGRES_USER=postgres
+export POSTGRES_PASSWORD=postgres
+export POSTGRES_HOST=localhost
+export POSTGRES_PORT=5432
+export POSTGRES_DB=task_db
+npm start
+# ターミナル出力: Backend server is running on port 5000
+
+# 9. 別のターミナルウィンドウを開く（ターミナル 2）
+
+# 10. フロントエンドのセットアップと起動
+cd ~/docker-intro/WebApp/frontend
+npm install
+npm start
+# ターミナル出力: listening on http://0.0.0.0:3000
+
+# 11. ブラウザで http://localhost:3000 にアクセス
 ```
 
-**この時点で少なくとも10分は経過するのでは...??**
+**初回セットアップで 10～15 分かかり、その後は毎回 5 分程度の手作業が必要です。**
 
 ### 1.0.2. 環境統一の問題
 
