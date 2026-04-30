@@ -1,4 +1,4 @@
-# Digitart Docker-intro
+# Docker-intro
 
 Docker講習会では、モダンなアプリケーション開発において不可欠なコンテナ技術であるDockerを通して、環境構築の重要性と効率性を学びます。
 
